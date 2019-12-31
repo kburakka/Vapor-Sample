@@ -28,6 +28,15 @@ public func routes(_ router: Router) throws {
       return "Hello, \(name)!"
     }
     
+    // return json
+    router.get("user") { req -> User in
+        return User(
+            name: "Vapor User",
+            email: "user@vapor.codes"
+        )
+    }
+
+    
     // Example of configuring a controller
     let todoController = TodoController()
     router.get("todos", use: todoController.index)
