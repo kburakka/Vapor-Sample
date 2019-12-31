@@ -1,5 +1,6 @@
 import FluentSQLite
 import Vapor
+import PostgreSQL
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
@@ -10,6 +11,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
+    try services.register(PostgreSQLProvider())
 
     // Register middleware
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
@@ -25,6 +27,12 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     databases.add(database: sqlite, as: .sqlite)
     services.register(databases)
 
+    let postgresql = PostgreSQLDatabase(config: PostgreSQLDatabaseConfig(hostname: "localhost", port: 5432, username: "postgres", database: "VaporSample", password: "anka06"))
+
+    /// Register the configured PostgreSQL database to the database config.
+    databases.add(database: postgresql, as: .psql)
+    services.register(databases)
+    
     // Configure migrations
     var migrations = MigrationConfig()
     migrations.add(model: Todo.self, database: .sqlite)

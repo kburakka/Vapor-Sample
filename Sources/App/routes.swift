@@ -1,17 +1,33 @@
 import Vapor
-
+import Routing
+import SQLite
+import Fluent
 /// Register your application's routes here.
+
+struct User: Content {
+    var name: String
+    var email: String
+}
+
 public func routes(_ router: Router) throws {
     // Basic "It works" example
     router.get { req in
         return "It works!"
     }
     
-    // Basic "Hello, world!" example
-    router.get("hello") { req in
-        return "Hello, world!"
-    }
 
+        router.get("name") { req in
+        return "name"
+    }
+    
+    // get parameter from user
+   router.get("hello", String.parameter) { req -> String in
+      
+      let name = try req.parameters.next(String.self)
+      
+      return "Hello, \(name)!"
+    }
+    
     // Example of configuring a controller
     let todoController = TodoController()
     router.get("todos", use: todoController.index)
